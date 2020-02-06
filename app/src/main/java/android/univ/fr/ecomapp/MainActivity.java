@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
                 loadingBar.setCanceledOnTouchOutside(false);
                 loadingBar.show();
             }
-            
+
         }
     }
 
