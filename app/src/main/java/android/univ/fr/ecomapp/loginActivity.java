@@ -2,14 +2,17 @@ package android.univ.fr.ecomapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import io.paperdb.Paper;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.univ.fr.ecomapp.Model.userModel;
+import android.univ.fr.ecomapp.Prevalent.Prevalent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -24,6 +27,7 @@ public class loginActivity extends AppCompatActivity {
     private Button LoginButton;
     private EditText  phoneNumber, password;
     private ProgressDialog loadingBar;
+    private CheckBox rememberMe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,9 @@ public class loginActivity extends AppCompatActivity {
         phoneNumber = (EditText) findViewById(R.id.login_phone_number_input);
         password = (EditText) findViewById(R.id.login_password_input);
         loadingBar = new ProgressDialog(this);
+
+        rememberMe = (CheckBox) findViewById(R.id.remember_me);
+        Paper.init(this);
 
         LoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,13 +70,18 @@ public class loginActivity extends AppCompatActivity {
             loadingBar.setMessage("Please wait a moment ...");
             loadingBar.setCanceledOnTouchOutside(false);
             loadingBar.show();
-
             allowAccesToAccount(phone, passwd);
         }
 
     }
 
     private void allowAccesToAccount(final String phone, final String passwd){
+
+        if (rememberMe.isChecked()){
+
+            Paper.book().write(Prevalent.UserPhoneKey, phone);
+            Paper.book().write(Prevalent.UserPasswordKey, passwd);
+        }
 
         final DatabaseReference RootRef;
         RootRef = FirebaseDatabase.getInstance().getReference();
@@ -92,7 +104,7 @@ public class loginActivity extends AppCompatActivity {
                         }
                         else {
                             loadingBar.dismiss();
-                            Toast.makeText(loginActivity.this,"Incorrect pawssord !", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(loginActivity.this,"Incorrect password !", Toast.LENGTH_SHORT).show();
                     }
 
                     }
